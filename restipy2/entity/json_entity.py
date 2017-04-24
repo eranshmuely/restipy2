@@ -72,8 +72,6 @@ class json_entity(Mapping):
 
         return json_value
 
-
-
     def __str__(self):
         return json.dumps(self.to_json(), sort_keys=True, indent=4)
 

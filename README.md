@@ -2,6 +2,11 @@
 
 restipy2 is a python-to-json-to-python serialization rest client (can also be used as a server)
 
+### Installation
+```
+pip install restipy2
+```
+
 ### Basic Usage
 All you have to do is subclass ```json_entity``` and add a bunch of ```json_property```s.
 

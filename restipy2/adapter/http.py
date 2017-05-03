@@ -43,13 +43,16 @@ class HTTPAuthorization(object):
         self._authentication_type = authentication_type
         self._authentication_value = authentication_value
 
+    def __repr__(self):
+        return '{} {}'.format(self._authentication_type, self._authentication_value)
+
     def __str__(self):
-        return '{0} {1}'.format(self._authentication_type, self._authentication_value)
+        return repr(self)
 
 
 class BasicHTTPAuthorization(HTTPAuthorization):
     def __init__(self, username, password):
-        value = urlsafe_b64encode('{0}:{1}'.format(username, password))
+        value = urlsafe_b64encode('{}:{}'.format(username, password))
         super(self.__class__, self).__init__('Basic', value)
 
 
@@ -166,6 +169,11 @@ class HTTPAdapter(object):
         self.cookie_jar = cookielib.CookieJar() if handle_cookies else None
         self._follow_redirects = follow_redirects
         self.ssl_verify = ssl_verify
+
+    def __repr__(self):
+        return 'HTTPAdapter(proxy={}, authorization={}, handle_cookies={}, follow_redirects={}, ssl_verify={})' \
+                .format(self.proxy is not None, self.authorization, self.cookie_jar is not None,
+                        self.follow_redirects, self.ssl_verify)
 
     @property
     def cookies(self):

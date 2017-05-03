@@ -12,8 +12,11 @@ class json_property(object):
     def to_json(self):
         return {self.json_name: self.json_value}
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.json_value)
+
+    def __str__(self):
+        return repr(self)
 
     def __int__(self):
         return int(self.json_value)

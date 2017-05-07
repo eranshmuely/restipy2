@@ -1,4 +1,5 @@
 class json_property(object):
+
     def __init__(self, json_name=None, json_type=None):
         """
         represents a property (key value pair) in a JSON document

@@ -32,7 +32,7 @@ class json_entity(Mapping):
                                 setattr(instance, key, float(json_data.get(value.json_name)))
                             continue
                         setattr(instance, key, json_data.get(value.json_name))
-                    except:
+                    except Exception:
                         setattr(instance, key, None)
             return instance
 

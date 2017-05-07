@@ -8,6 +8,7 @@ from restipy2.entity import json_entity
 
 
 class JSONResponse(urllib.addbase):
+
     def __init__(self, response):
         urllib.addbase.__init__(self, response.fp)
         self.headers = response.headers
@@ -15,7 +16,7 @@ class JSONResponse(urllib.addbase):
         self.code = response.code
         try:
             self.json = json.load(response.fp)
-        except:
+        except Exception:
             self.json = response.fp.read()
 
     def info(self):
@@ -35,10 +36,12 @@ class JSONResponse(urllib.addbase):
         return self.read().get(key, default)
 
     def __str__(self):
-        return json.dumps(self.json, sort_keys=True, indent=4, separators=(',', ': '))
+        return json.dumps(self.json, sort_keys=True, indent=4,
+                          separators=(',', ': '))
 
 
 class HTTPAuthorization(object):
+
     def __init__(self, authentication_type, authentication_value):
         self._authentication_type = authentication_type
         self._authentication_value = authentication_value
@@ -51,12 +54,14 @@ class HTTPAuthorization(object):
 
 
 class BasicHTTPAuthorization(HTTPAuthorization):
+
     def __init__(self, username, password):
         value = urlsafe_b64encode('{}:{}'.format(username, password))
         super(self.__class__, self).__init__('Basic', value)
 
 
 class BearerHTTPAuthorization(HTTPAuthorization):
+
     def __init__(self, bearer):
         super(self.__class__, self).__init__('Bearer', bearer)
 
@@ -67,6 +72,7 @@ class ContentType(set):
 
 
 class HTTPProxy(urllib2.ProxyHandler):
+
     def __init__(self, proxy_host, username=None, password=None):
         urllib2.ProxyHandler.__init__(self, {'http': proxy_host, 'https': proxy_host})
         self.proxy_auth_handler = None  # type: urllib2.ProxyBasicAuthHandler
@@ -78,11 +84,13 @@ class HTTPProxy(urllib2.ProxyHandler):
     @property
     def handlers(self):
         handlers = [self]
-        if self.proxy_auth_handler: handlers.append(self.proxy_auth_handler)
+        if self.proxy_auth_handler:
+            handlers.append(self.proxy_auth_handler)
         return handlers
 
 
 class HTTPRequest(urllib2.Request):
+
     @property
     def method(self):
         return self.get_method()
@@ -110,7 +118,8 @@ class HTTPRequest(urllib2.Request):
     def __init__(self, url, data=None, headers={}, method='GET', content_type=ContentType.JSON, authorization=None,
                  proxy=None, cookie_jar=None, follow_redirects=False):
         urllib2.Request.__init__(self, url, data, headers)
-        if authorization: self.add_header('Authorization', str(authorization))
+        if authorization:
+            self.add_header('Authorization', str(authorization))
         self.add_header('Content-Type', content_type)
         self.get_method = lambda: method
         self._proxy = proxy
@@ -125,12 +134,16 @@ class HTTPRequest(urllib2.Request):
                 ctx.check_hostname = False
                 ctx.verify_mode = ssl.CERT_NONE
                 handlers.append(urllib2.HTTPSHandler(context=ctx))
-            if self.proxy: handlers += self.proxy.handlers
-            if self.cookie_jar is not None: handlers.append(urllib2.HTTPCookieProcessor(self.cookie_jar))
+            if self.proxy:
+                handlers += self.proxy.handlers
+            if self.cookie_jar:
+                handlers.append(urllib2.HTTPCookieProcessor(self.cookie_jar))
             if not self._follow_redirects:
                 class NoRedirectHandler(urllib2.HTTPRedirectHandler):
+
                     def http_error_302(self, req, fp, code, msg, headers):
-                        infourl = urllib.addinfourl(fp,headers,req.get_full_url(),code)
+                        infourl = urllib.addinfourl(fp, headers,
+                                                    req.get_full_url(), code)
                         infourl.status = code
                         return infourl
                 handlers.append(NoRedirectHandler())
